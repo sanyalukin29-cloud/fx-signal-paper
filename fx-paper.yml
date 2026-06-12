@@ -1,0 +1,39 @@
+name: FX Paper Bot (daily)
+
+on:
+  schedule:
+    - cron: "5 21 * * *"   # 04:05 เวลาไทย (21:05 UTC วันก่อนหน้า)
+  workflow_dispatch: {}     # กดรันเองได้จากแท็บ Actions
+
+permissions:
+  contents: write           # ให้ commit state กลับ repo ได้
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install yfinance statsmodels httpx
+
+      - name: Run paper bot + build dashboard
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID:   ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          python fx_autotrader.py
+          python fx_dashboard.py
+          cp fx_dashboard.html index.html   # สำหรับ GitHub Pages
+
+      - name: Commit state + dashboard
+        run: |
+          git config user.name  "fx-bot"
+          git config user.email "fx-bot@users.noreply.github.com"
+          git add -A state.json paper_trades.csv fx_dashboard.html index.html 2>/dev/null || true
+          git commit -m "paper run $(date -u +%F)" || echo "no changes"
+          git push || echo "push skipped"
