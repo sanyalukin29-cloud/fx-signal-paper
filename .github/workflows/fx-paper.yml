@@ -34,6 +34,6 @@ jobs:
         run: |
           git config user.name  "fx-bot"
           git config user.email "fx-bot@users.noreply.github.com"
-          git add -A state.json paper_trades.csv fx_dashboard.html index.html 2>/dev/null || true
+          git add -A
           git commit -m "paper run $(date -u +%F)" || echo "no changes"
           git push || echo "push skipped"
