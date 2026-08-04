@@ -1,3 +1,10 @@
 {
-  "position": "NONE"
+  "position": "LONG",
+  "entry_date": "2026-08-04",
+  "entry_z": -3.408,
+  "entry_eurjpy": 181.841,
+  "entry_gbpjpy": 212.106,
+  "hedge": 0.308,
+  "ticket_a": 0,
+  "ticket_b": 0
 }
